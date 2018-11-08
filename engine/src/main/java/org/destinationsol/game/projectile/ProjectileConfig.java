@@ -19,11 +19,12 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.assets.audio.PlayableSound;
 import org.destinationsol.game.DmgType;
+import org.destinationsol.game.drawables.SpriteInfo;
 import org.destinationsol.game.particle.EffectConfig;
 
 public class ProjectileConfig {
 
-    public final TextureAtlas.AtlasRegion tex;
+    public final SpriteInfo sprite;
     public final float texSz;
     public final float speedLen;
     public final float physSize;
@@ -45,12 +46,12 @@ public class ProjectileConfig {
     public final float dmg;
     public final float emTime;
 
-    public ProjectileConfig(TextureAtlas.AtlasRegion tex, float texSz, float speedLen, boolean stretch,
+    public ProjectileConfig(SpriteInfo sprite, float texSz, float speedLen, boolean stretch,
                             float physSize, DmgType dmgType, PlayableSound collisionSound, float lightSz, EffectConfig trailEffect,
                             EffectConfig bodyEffect, EffectConfig collisionEffect, EffectConfig collisionEffectBackground,
                             boolean zeroAbsSpeed, Vector2 origin, float acc, PlayableSound workSound, boolean massless, float density,
                             float guideRotationSpeed, float dmg, float emTime) {
-        this.tex = tex;
+        this.sprite = sprite;
         this.texSz = texSz;
         this.speedLen = speedLen;
         this.stretch = stretch;

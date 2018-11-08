@@ -15,6 +15,7 @@
  */
 package org.destinationsol.game.projectile;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.assets.json.Validator;
@@ -26,6 +27,7 @@ import org.destinationsol.assets.json.Json;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.DmgType;
 import org.destinationsol.game.GameColors;
+import org.destinationsol.game.drawables.SpriteInfo;
 import org.destinationsol.game.particle.EffectConfig;
 import org.destinationsol.game.particle.EffectTypes;
 import org.terasology.assets.ResourceUrn;
@@ -55,7 +57,13 @@ public class ProjectileConfigs {
                 JSONObject node = rootNode.getJSONObject(s);
                 String name = s;
                 String texName = node.getString("tex");
-                TextureAtlas.AtlasRegion tex = Assets.getAtlasRegion(texName + "Projectile");
+                String projectileTexName = texName + "Projectile";
+                TextureAtlas.AtlasRegion tex = Assets.getAtlasRegion(projectileTexName);
+                Animation<TextureAtlas.AtlasRegion> animation = Assets.getAnimation(projectileTexName);
+                if (animation == null) {
+                    animation = new Animation<TextureAtlas.AtlasRegion>(0, tex);
+                }
+                SpriteInfo sprite = new SpriteInfo(tex.name, animation);
                 float texSz = (float) node.getDouble("texSz");
                 float speedLen = (float) node.getDouble("spdLen");
                 float physSize = (float) node.optDouble("physSize", 0);
@@ -78,7 +86,7 @@ public class ProjectileConfigs {
                 float density = (float) node.optDouble("density", -1);
                 float dmg = (float) node.getDouble("dmg");
                 float emTime = (float) node.optDouble("emTime", 0);
-                ProjectileConfig config = new ProjectileConfig(tex, texSz, speedLen, stretch, physSize, dmgType,
+                ProjectileConfig config = new ProjectileConfig(sprite, texSz, speedLen, stretch, physSize, dmgType,
                         collisionSound, lightSz, trailEffect, bodyEffect, collisionEffect, collisionEffectBackground,
                         zeroAbsSpeed, origin, acc, workSound, bodyless, density, guideRotationSpeed, dmg, emTime);
                 configs.put(name, config);
