@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-package org.destinationsol.game.ship;
+package org.destinationsol.game.abilities;
 
 import com.badlogic.gdx.math.Vector2;
+import org.destinationsol.game.ship.AbilityConfig;
+import org.destinationsol.game.ship.ShipAbility;
+import org.destinationsol.game.ship.SolShip;
 import org.json.JSONObject;
 import org.destinationsol.common.SolMath;
 import org.destinationsol.game.AbilityCommonConfig;
@@ -61,8 +64,14 @@ public class SloMo implements ShipAbility {
             game.getPartMan().finish(game, src, position);
             return true;
         }
+
         float ts = game.getTimeStep();
         factor = SolMath.approach(factor, 1, SLO_MO_CHG_SPD * ts);
+
+        if (owner.getPilot().isPlayer()) {
+            game.setTimeFactor(factor);
+        }
+
         return false;
     }
 

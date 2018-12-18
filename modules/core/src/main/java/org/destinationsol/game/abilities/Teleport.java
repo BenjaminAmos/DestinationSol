@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-package org.destinationsol.game.ship;
+package org.destinationsol.game.abilities;
 
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import org.destinationsol.game.ship.AbilityConfig;
+import org.destinationsol.game.ship.ShipAbility;
+import org.destinationsol.game.ship.SolShip;
 import org.json.JSONObject;
 import org.destinationsol.assets.Assets;
 import org.destinationsol.common.SolMath;

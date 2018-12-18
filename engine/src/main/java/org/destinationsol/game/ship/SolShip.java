@@ -275,10 +275,6 @@ public class SolShip implements SolObject {
         }
         myElectricitySrc.setWorking(!isControlsEnabled());
 
-        if (myAbility instanceof Teleport) {
-            ((Teleport) myAbility).maybeTeleport(game, this);
-        }
-
         colliding = false;
     }
 

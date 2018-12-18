@@ -48,9 +48,7 @@ import org.destinationsol.game.planet.PlanetManager;
 import org.destinationsol.game.planet.SolSystem;
 import org.destinationsol.game.planet.SunSingleton;
 import org.destinationsol.game.screens.GameScreens;
-import org.destinationsol.game.ship.ShipAbility;
 import org.destinationsol.game.ship.ShipBuilder;
-import org.destinationsol.game.ship.SloMo;
 import org.destinationsol.game.ship.hulls.HullConfig;
 import org.destinationsol.mercenary.MercenaryUtils;
 import org.destinationsol.modules.ModuleManager;
@@ -178,6 +176,8 @@ public class SolGame {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        setTimeFactor(1);
 
         // from this point we're ready!
         respawnState = new RespawnState();
@@ -309,14 +309,6 @@ public class SolGame {
     }
 
     private void scaleTimeStep() {
-        timeFactor = DebugOptions.GAME_SPEED_MULTIPLIER;
-        if (hero.isAlive() && hero.isNonTranscendent()) {
-            ShipAbility ability = hero.getAbility();
-            if (ability instanceof SloMo) {
-                float factor = ((SloMo) ability).getFactor();
-                timeFactor *= factor;
-            }
-        }
         timeStep = Const.REAL_TIME_STEP * timeFactor;
     }
 
@@ -347,6 +339,10 @@ public class SolGame {
 
     public float getTimeStep() {
         return timeStep;
+    }
+
+    public void setTimeFactor(float factor) {
+        timeFactor = DebugOptions.GAME_SPEED_MULTIPLIER * factor;
     }
 
     public SolCam getCam() {
