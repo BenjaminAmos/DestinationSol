@@ -19,8 +19,10 @@ import org.destinationsol.game.SolGame;
 import org.destinationsol.game.SolObject;
 import org.destinationsol.game.UpdateAwareSystem;
 import org.destinationsol.game.abilities.Teleport;
+import org.destinationsol.game.attributes.RegisterUpdateSystem;
 import org.destinationsol.game.ship.SolShip;
 
+@RegisterUpdateSystem
 public class TeleportSystem implements UpdateAwareSystem {
     @Override
     public void update(SolGame game, float timeStep) {
