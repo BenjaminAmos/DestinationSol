@@ -32,6 +32,9 @@ import org.destinationsol.game.item.MercItem;
 import org.destinationsol.game.item.SolItem;
 import org.destinationsol.game.ship.SolShip;
 import org.destinationsol.game.ship.hulls.HullConfig;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,8 +51,12 @@ public class SaveManager {
     protected static final String SAVE_FILE_NAME = "prevShip.ini";
     protected static final String MERC_SAVE_FILE = "mercenaries.json";
     protected static final String WORLD_SAVE_FILE_NAME = "world.json";
+    protected static final String WORLD_SAVE_EXTRA_FILE_NAME = "worldExtra.json";
+    protected static final String SAVE_PLAYER_EXTRA_FILE_NAME = "prevShipExtra.json";
 
     private static Logger logger = LoggerFactory.getLogger(SaveManager.class);
+    private static JSONObject playerExtraJSON;
+    private static JSONObject worldExtraJSON;
 
     protected SaveManager() { }
 
@@ -57,12 +64,105 @@ public class SaveManager {
         String hullName = hullConfigManager.getName(hull);
 
         writeMercs(hero, hullConfigManager);
+        writeExtraPlayerData();
 
         String items = itemsToString(itemsList);
 
         Vector2 pos = hero.getPosition();
 
         IniReader.write(SAVE_FILE_NAME, "hull", hullName, "money", (int) money, "items", items, "x", pos.x, "y", pos.y);
+    }
+
+    /**
+     * Saves the JSONObject json into the player's additional save data under the key module.
+     * @param module the key to save the data under.
+     * @param json the json to save.
+     */
+    public static void savePlayerJSON(String module, JSONObject json) {
+        if (playerExtraJSON == null) {
+            playerExtraJSON = new JSONObject();
+        }
+
+        playerExtraJSON.put(module, json);
+    }
+
+    /**
+     * Gets the JSON associated with the String module.
+     * @param module the key the JSON is stored under.
+     * @return the JSON object, or null if not found.
+     */
+    public static JSONObject loadPlayerJSON(String module) {
+        if (playerExtraJSON == null) {
+            playerExtraJSON = loadJSON(SAVE_PLAYER_EXTRA_FILE_NAME);
+            if (playerExtraJSON != null) {
+                logger.debug("Successfully loaded the extra player data file");
+            } else {
+                playerExtraJSON = new JSONObject();
+                logger.debug("Failed to load the extra player data file, so created a blank save extra state");
+            }
+        }
+
+        return playerExtraJSON.optJSONObject(module);
+    }
+
+    /**
+     * Saves the JSONObject json into the player's additional save data under the key module.
+     * @param module the key to save the data under.
+     * @param json the json to save.
+     */
+    public static void saveWorldJSON(String module, JSONObject json) {
+        if (worldExtraJSON == null) {
+            worldExtraJSON = new JSONObject();
+        }
+
+        worldExtraJSON.put(module, json);
+    }
+
+    /**
+     * Gets the JSON associated with the String module.
+     * @param module the key the JSON is stored under.
+     * @return the JSON object, or null if not found.
+     */
+    public static JSONObject loadWorldJSON(String module) {
+        if (worldExtraJSON == null) {
+            worldExtraJSON = loadJSON(WORLD_SAVE_EXTRA_FILE_NAME);
+            if (worldExtraJSON != null) {
+                logger.debug("Successfully loaded the world player data file");
+            } else {
+                worldExtraJSON = new JSONObject();
+                logger.debug("Failed to load the extra world data file, so created a blank save extra state");
+            }
+        }
+
+        return worldExtraJSON.optJSONObject(module);
+    }
+
+    /**
+     * Loads the JSONObject contents from a file.
+     * @param file the file to load from.
+     * @return the JSON in the file, if the file exists and the JSON is valid, or null.
+     */
+    private static JSONObject loadJSON(String file) {
+        JSONObject result = null;
+        if (SaveManager.resourceExists(file)) {
+            FileReader reader = null;
+            try {
+                reader = new FileReader(SaveManager.getResourcePath(file));
+                result = new JSONObject(new JSONTokener(reader));
+            } catch (FileNotFoundException | JSONException e) {
+                // Ignore exception
+            } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        // ignore exception
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -140,6 +240,39 @@ public class SaveManager {
             writer.close();
         } catch (FileNotFoundException | UnsupportedEncodingException e) {
             logger.error("Could not save mercenaries, " + e.getMessage());
+        }
+    }
+
+    private static void writeExtraPlayerData() {
+        PrintWriter writer;
+        if (playerExtraJSON == null) {
+            playerExtraJSON = new JSONObject();
+        }
+        // Use 4 spaces indentation
+        String playerStringToWrite = playerExtraJSON.toString(4);
+        try {
+            writer = new PrintWriter(getResourcePath(SAVE_PLAYER_EXTRA_FILE_NAME), "UTF-8");
+            writer.write(playerStringToWrite);
+            writer.close();
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            logger.error("Could not save extra player data, " + e.getMessage());
+        }
+    }
+
+    private static void writeExtraWorldData(Gson gson) {
+        PrintWriter writer;
+        if (worldExtraJSON == null) {
+            worldExtraJSON = new JSONObject();
+        }
+        // Use 4 spaces indentation
+        String worldStringToWrite = worldExtraJSON.toString(4);
+
+        try {
+            writer = new PrintWriter(getResourcePath(WORLD_SAVE_EXTRA_FILE_NAME), "UTF-8");
+            writer.write(worldStringToWrite);
+            writer.close();
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            logger.error("Could not save extra world data, " + e.getMessage());
         }
     }
 
@@ -228,6 +361,8 @@ public class SaveManager {
                 writer.close();
             }
         }
+
+        writeExtraWorldData(gson);
     }
 
     /**
