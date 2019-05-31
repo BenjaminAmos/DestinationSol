@@ -39,8 +39,8 @@ public class LootBuilder {
     public LootBuilder() {
     }
 
-    // set speed & rot speed
-    public Loot build(SolGame game, Vector2 position, SolItem item, Vector2 speed, int life, float rotationSpeed, SolShip owner) {
+    // set velocity & rot speed
+    public Loot build(SolGame game, Vector2 position, SolItem item, Vector2 velocity, int life, float rotationSpeed, SolShip owner) {
         List<Drawable> drawables = new ArrayList<>();
         TextureAtlas.AtlasRegion tex = item.getIcon(game);
         float sz = item.getItemType().sz;
@@ -48,7 +48,7 @@ public class LootBuilder {
         RectSprite s = SpriteManager.createSprite(tex.name, sz, 0, 0, new Vector2(), DrawableLevel.GUNS, 0, 0, SolColor.WHITE, false);
         drawables.add(s);
         Body b = buildBody(game, position, sz);
-        b.setLinearVelocity(speed);
+        b.setLinearVelocity(velocity);
         b.setAngularVelocity(rotationSpeed);
         Color col = item.getItemType().color;
         LightSource ls = new LightSource(sz + .18f, false, .5f, new Vector2(), col);

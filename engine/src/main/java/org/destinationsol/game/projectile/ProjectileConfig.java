@@ -26,7 +26,7 @@ public class ProjectileConfig {
 
     public final SpriteInfo sprite;
     public final float texSz;
-    public final float speedLen;
+    public final float speed;
     public final float physSize;
     public final boolean stretch;
     public final DmgType dmgType;
@@ -46,14 +46,14 @@ public class ProjectileConfig {
     public final float dmg;
     public final float emTime;
 
-    public ProjectileConfig(SpriteInfo sprite, float texSz, float speedLen, boolean stretch,
+    public ProjectileConfig(SpriteInfo sprite, float texSz, float speed, boolean stretch,
                             float physSize, DmgType dmgType, PlayableSound collisionSound, float lightSz, EffectConfig trailEffect,
                             EffectConfig bodyEffect, EffectConfig collisionEffect, EffectConfig collisionEffectBackground,
                             boolean zeroAbsSpeed, Vector2 origin, float acc, PlayableSound workSound, boolean massless, float density,
                             float guideRotationSpeed, float dmg, float emTime) {
         this.sprite = sprite;
         this.texSz = texSz;
-        this.speedLen = speedLen;
+        this.speed = speed;
         this.stretch = stretch;
         this.physSize = physSize;
         this.dmgType = dmgType;
