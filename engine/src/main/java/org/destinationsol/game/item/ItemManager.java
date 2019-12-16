@@ -27,6 +27,7 @@ import org.destinationsol.game.projectile.ProjectileConfigs;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ItemManager {
     public final ProjectileConfigs projConfigs;
@@ -35,9 +36,9 @@ public class ItemManager {
     public final TextureAtlas.AtlasRegion bigMoneyIcon;
     public final TextureAtlas.AtlasRegion hugeMoneyIcon;
     public final TextureAtlas.AtlasRegion repairIcon;
-    private final HashMap<String, SolItem> myM = new HashMap<>();
-    private final ArrayList<SolItem> myL = new ArrayList<>();
-    private final HashMap<String, Engine.Config> engineConfigs = new HashMap<>();
+    private final Map<String, SolItem> myM = new HashMap<>();
+    private final ArrayList<SolItem> myL= new ArrayList<>();
+    private final Map<String, Engine.Config> engineConfigs = new HashMap<>();
     private final SolItemTypes myTypes;
     private final RepairItem myRepairExample;
     private final OggSoundManager soundManager;

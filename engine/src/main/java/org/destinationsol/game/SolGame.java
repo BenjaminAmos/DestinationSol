@@ -168,7 +168,7 @@ public class SolGame {
                 if (!updateSystemClass.isAnnotationPresent(RegisterUpdateSystem.class)) {
                     continue;
                 }
-                RegisterUpdateSystem registerAnnotation = updateSystemClass.getDeclaredAnnotation(RegisterUpdateSystem.class);
+                RegisterUpdateSystem registerAnnotation = updateSystemClass.getAnnotation(RegisterUpdateSystem.class);
                 UpdateAwareSystem system = (UpdateAwareSystem) updateSystemClass.newInstance();
                 if (!registerAnnotation.paused()) {
                     if (!updateSystems.containsKey(registerAnnotation.priority())) {
