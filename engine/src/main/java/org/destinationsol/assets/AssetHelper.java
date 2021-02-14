@@ -21,6 +21,7 @@ import org.destinationsol.assets.sound.OggSoundData;
 import org.destinationsol.assets.music.OggMusicData;
 import org.destinationsol.assets.music.OggMusic;
 import org.destinationsol.assets.sound.OggSound;
+import org.destinationsol.assets.ui.UIDeltaFormat;
 import org.destinationsol.assets.ui.UIFormat;
 import org.destinationsol.assets.ui.UISkinFormat;
 import org.terasology.gestalt.assets.Asset;
@@ -86,6 +87,7 @@ public class AssetHelper {
 
         assetTypeManager.createAssetType(UIElement.class, UIElement::new, "ui");
         ((AssetFileDataProducer)assetTypeManager.getAssetType(UIElement.class).get().getProducers().get(0)).addAssetFormat(new UIFormat(widgetLibrary));
+        ((AssetFileDataProducer)assetTypeManager.getAssetType(UIElement.class).get().getProducers().get(0)).addDeltaFormat(new UIDeltaFormat(widgetLibrary));
 
         assetTypeManager.switchEnvironment(environment);
     }
