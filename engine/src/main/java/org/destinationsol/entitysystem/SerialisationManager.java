@@ -21,15 +21,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Optional;
 
 import com.google.common.collect.Lists;
 import com.google.protobuf.ByteString;
 
+import org.destinationsol.modules.ModuleManager;
 import org.destinationsol.protobuf.EntityData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.terasology.gestalt.assets.ResourceUrn;
+import org.terasology.gestalt.assets.module.ModuleDependencyResolutionStrategy;
+import org.terasology.gestalt.assets.module.ModuleEnvironmentDependencyProvider;
 import org.terasology.gestalt.entitysystem.component.Component;
+import org.terasology.gestalt.entitysystem.component.management.ComponentTypeIndex;
 import org.terasology.gestalt.entitysystem.entity.EntityManager;
 import org.terasology.gestalt.entitysystem.entity.EntityRef;
 
@@ -38,12 +43,13 @@ public final class SerialisationManager {
     private static final Logger logger = LoggerFactory.getLogger(SerialisationManager.class);
     private File file;
     private EntityManager entityManager;
-    private ClassLoader classLoader;
+    private ComponentTypeIndex componentTypeIndex;
 
-    public SerialisationManager(String path, EntityManager entityManager, ClassLoader classLoader) {
+    public SerialisationManager(String path, EntityManager entityManager, ModuleManager moduleManager) {
         file = new File(path);
         this.entityManager = entityManager;
-        this.classLoader = classLoader;
+        componentTypeIndex = new ComponentTypeIndex(moduleManager.getEnvironment(),
+                new ModuleDependencyResolutionStrategy(new ModuleEnvironmentDependencyProvider(moduleManager.getEnvironment())));
     }
 
     public void serialise() throws IllegalArgumentException, IllegalAccessException, IOException {
@@ -108,11 +114,6 @@ public final class SerialisationManager {
 
     public void deserialise() throws IOException, ClassNotFoundException, InstantiationException,
             IllegalAccessException, NoSuchFieldException {
-        if (classLoader == null) {
-            logger.warn("Trying to deserialise with Null classloader. Aborting");
-            return;
-        }
-
         FileInputStream input = new FileInputStream(file);
         EntityData.EntityStore store = EntityData.EntityStore.parseFrom(input);
         input.close();
@@ -121,7 +122,16 @@ public final class SerialisationManager {
             Collection<Component> componentsToAdd = Lists.newArrayList();
 
             for (EntityData.Component component : entity.getComponentList()) {
-                Class<?> componentClass = Class.forName(component.getTypeName(), true, classLoader);
+                String fullTypeName = component.getTypeName();
+                String[] typeNameParts = fullTypeName.split("\\.");
+                Optional<Class<? extends Component>> potentialComponentClass =
+                        componentTypeIndex.find(typeNameParts[typeNameParts.length-1]);
+                if (!potentialComponentClass.isPresent()) {
+                    logger.error("Unable to deserialise missing component class: '{}'", component.getTypeName());
+                    return;
+                }
+                Class<? extends Component> componentClass = potentialComponentClass.get();
+
                 Component<?> componentObject = (Component<?>) componentClass.newInstance();
 
                 for (EntityData.Field field : component.getFieldList()) {

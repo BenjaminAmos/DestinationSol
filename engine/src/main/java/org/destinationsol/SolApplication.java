@@ -342,8 +342,7 @@ public class SolApplication implements ApplicationListener {
         Iterator<Class<? extends Component>> componentClasses =
                 moduleManager.getEnvironment().getSubtypesOf(Component.class).iterator();
         SerialisationManager serialisationManager = new SerialisationManager(
-                SaveManager.getResourcePath("entity_store.dat"), entitySystemManager.getEntityManager(),
-                componentClasses.hasNext() ? componentClasses.next().getClassLoader() : null);
+                SaveManager.getResourcePath("entity_store.dat"), entitySystemManager.getEntityManager(), moduleManager);
         context.put(SerialisationManager.class, serialisationManager);
 
         if (!isNewGame) {
