@@ -147,7 +147,7 @@ public class SolApplication implements ApplicationListener {
         helper.init(moduleManager.getEnvironment(), componentManager, isMobile);
         Assets.initialize(helper);
 
-        context.put(ComponentSystemManager.class, new ComponentSystemManager(moduleManager.getEnvironment(), context));
+        context.put(ComponentSystemManager.class, new ComponentSystemManager(moduleManager.getEnvironment()));
         logger.info("\n\n ------------------------------------------------------------ \n");
         moduleManager.printAvailableModules();
 
@@ -321,7 +321,6 @@ public class SolApplication implements ApplicationListener {
 
     public void play(boolean tut, String shipName, boolean isNewGame, WorldConfig worldConfig) {
 
-        context.get(ComponentSystemManager.class).preBegin();
         solGame = new SolGame(shipName, tut, isNewGame, commonDrawer, context, worldConfig);
         context.put(SolGame.class, solGame);
 
@@ -331,12 +330,6 @@ public class SolApplication implements ApplicationListener {
 
         entitySystemManager = new EntitySystemManager(moduleManager.getEnvironment(), componentManager, context);
 
-        InjectionHelper.inject(solGame.getContactListener(), context);
-
-        solGame.createUpdateSystems(context);
-
-        solGame.startGame(shipName, isNewGame, worldConfig, new SolNames(), entitySystemManager);
-
         // Big, fat, ugly HACK to get a working classloader
         // Serialisation and thus a classloader is not needed when there are no components
         Iterator<Class<? extends Component>> componentClasses =
@@ -345,6 +338,16 @@ public class SolApplication implements ApplicationListener {
                 SaveManager.getResourcePath("entity_store.dat"), entitySystemManager.getEntityManager(),
                 componentClasses.hasNext() ? componentClasses.next().getClassLoader() : null);
         context.put(SerialisationManager.class, serialisationManager);
+
+        InjectionHelper.inject(solGame.getContactListener(), context);
+
+        solGame.createUpdateSystems(context);
+
+        ComponentSystemManager componentSystemManager = context.get(ComponentSystemManager.class);
+        componentSystemManager.init(context);
+        componentSystemManager.preBegin();
+
+        solGame.startGame(shipName, isNewGame, worldConfig, new SolNames(), entitySystemManager);
 
         if (!isNewGame) {
             try {

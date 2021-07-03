@@ -26,12 +26,26 @@ public class ComponentSystemManager {
 
     private ArrayList<ComponentSystem> componentSystems = Lists.newArrayList();
 
-    public ComponentSystemManager(ModuleEnvironment environment, Context context) {
+    public ComponentSystemManager(ModuleEnvironment environment) {
         for (Class<? extends ComponentSystem> componentSystem : environment.getSubtypesOf(ComponentSystem.class)) {
             try {
                 ComponentSystem system = componentSystem.newInstance();
-                InjectionHelper.inject(system, context);
                 componentSystems.add(system);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Initialises all component systems using the context provided. This should be called before {@link #preBegin()}.
+     * @param context the context to inject
+     */
+    public void init(Context context) {
+        for (ComponentSystem componentSystem : componentSystems) {
+            try {
+                InjectionHelper.inject(componentSystem, context);
+                componentSystem.initialise();
             } catch (Exception e) {
                 e.printStackTrace();
             }
