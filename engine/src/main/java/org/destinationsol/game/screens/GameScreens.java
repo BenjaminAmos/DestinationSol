@@ -22,6 +22,7 @@ import org.destinationsol.ui.SolLayouts;
 import org.destinationsol.ui.nui.screens.InventoryScreen;
 import org.destinationsol.ui.nui.screens.MapScreen;
 import org.destinationsol.ui.nui.screens.WaypointCreationScreen;
+import org.destinationsol.ui.nui.screens.MenuScreen;
 
 import javax.inject.Inject;
 
@@ -44,7 +45,7 @@ public class GameScreens {
         } else {
             mapScreen = (MapScreen) cmp.getNuiManager().createScreen("engine:mapScreen_mobile");
         }
-        menuScreen = new MenuScreen(layouts.menuLayout, cmp.getOptions());
+        menuScreen = (MenuScreen) cmp.getNuiManager().createScreen("engine:menuScreen");
         inventoryScreen = (org.destinationsol.ui.nui.screens.InventoryScreen) cmp.getNuiManager().createScreen("engine:inventoryScreen");
         talkScreen = new TalkScreen(layouts.menuLayout, cmp.getOptions());
         waypointCreationScreen = (WaypointCreationScreen) cmp.getNuiManager().createScreen("engine:waypointCreationScreen");
