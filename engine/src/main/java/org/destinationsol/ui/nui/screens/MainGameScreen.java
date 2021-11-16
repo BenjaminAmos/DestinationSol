@@ -30,13 +30,10 @@ import org.destinationsol.ui.nui.widgets.UIWarnButton;
 import org.terasology.input.ButtonState;
 import org.terasology.input.Keyboard;
 import org.terasology.nui.AbstractWidget;
-import org.terasology.nui.BaseInteractionListener;
-import org.terasology.nui.Canvas;
-import org.terasology.nui.InteractionListener;
 import org.terasology.nui.UIWidget;
 import org.terasology.nui.backends.libgdx.GDXInputUtil;
 import org.terasology.nui.events.NUIKeyEvent;
-import org.terasology.nui.events.NUIMouseClickEvent;
+import org.terasology.nui.events.NUIMouseButtonEvent;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -61,18 +58,6 @@ public class MainGameScreen extends NUIScreenLayer {
     public MainGameScreen(SolApplication solApplication) {
         this.solApplication = solApplication;
     }
-
-    private final InteractionListener interactionListener = new BaseInteractionListener() {
-        @Override
-        public boolean onMouseClick(NUIMouseClickEvent event) {
-            NUIScreenLayer topScreen = nuiManager.getTopScreen();
-            if (topScreen != MainGameScreen.this && !(topScreen instanceof UIShipControlsScreen)) {
-                nuiManager.popScreen();
-                return true;
-            }
-            return false;
-        }
-    };
 
     @Override
     public void initialise() {
@@ -175,12 +160,6 @@ public class MainGameScreen extends NUIScreenLayer {
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
-        canvas.addInteractionRegion(interactionListener);
-        super.onDraw(canvas);
-    }
-
-    @Override
     protected boolean escapeCloses() {
         return false;
     }
@@ -208,6 +187,18 @@ public class MainGameScreen extends NUIScreenLayer {
         }
 
         return super.onKeyEvent(event);
+    }
+
+    @Override
+    public void onMouseButtonEvent(NUIMouseButtonEvent event) {
+        if (event.getState() == ButtonState.UP) {
+            NUIScreenLayer topScreen = nuiManager.getTopScreen();
+            if (!solApplication.getInputManager().isMouseOnUi() &&
+                    topScreen != MainGameScreen.this && !(topScreen instanceof UIShipControlsScreen)) {
+                nuiManager.popScreen();
+                event.consume();
+            }
+        }
     }
 
     @Override
@@ -322,6 +313,8 @@ public class MainGameScreen extends NUIScreenLayer {
             gameScreens.inventoryScreen.setOperations(gameScreens.inventoryScreen.getChooseMercenaryScreen());
             nuiManager.pushScreen(gameScreens.inventoryScreen);
             hero.getMercs().markAllAsSeen();
+        } else {
+            nuiManager.removeScreen(gameScreens.inventoryScreen);
         }
     }
 }
