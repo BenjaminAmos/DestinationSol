@@ -27,19 +27,22 @@ import org.destinationsol.ui.nui.screens.MenuScreen;
 import javax.inject.Inject;
 
 public class GameScreens {
-    public final MainGameScreen mainGameScreen;
+    private static final String NUI_MAIN_GAME_SCREEN_DESKTOP_URI = "engine:mainGameScreen_desktop";
+    private static final String NUI_MAIN_GAME_SCREEN_MOBILE_URI = "engine:mainGameScreen_mobile";
+    public final MainGameScreen oldMainGameScreen;
     public final MapScreen mapScreen;
     public final MenuScreen menuScreen;
     public final InventoryScreen inventoryScreen;
     public final TalkScreen talkScreen;
     public final WaypointCreationScreen waypointCreationScreen;
     public final ConsoleScreen consoleScreen;
+    public final org.destinationsol.ui.nui.screens.MainGameScreen mainGameScreen;
 
     @Inject
     public GameScreens(SolApplication cmp, Context context) {
         SolLayouts layouts = cmp.getLayouts();
         RightPaneLayout rightPaneLayout = layouts.rightPaneLayout;
-        mainGameScreen = new MainGameScreen(rightPaneLayout, context);
+        oldMainGameScreen = new MainGameScreen(rightPaneLayout, context);
         if (!cmp.isMobile()) {
             mapScreen = (MapScreen) cmp.getNuiManager().createScreen("engine:mapScreen_desktop");
         } else {
@@ -50,11 +53,17 @@ public class GameScreens {
         talkScreen = new TalkScreen(layouts.menuLayout, cmp.getOptions());
         waypointCreationScreen = (WaypointCreationScreen) cmp.getNuiManager().createScreen("engine:waypointCreationScreen");
         consoleScreen = new ConsoleScreen(context.get(Console.class));
+        boolean isMobile = cmp.isMobile();
+        if (!isMobile) {
+            mainGameScreen = (org.destinationsol.ui.nui.screens.MainGameScreen) cmp.getNuiManager().createScreen(NUI_MAIN_GAME_SCREEN_DESKTOP_URI);
+        } else {
+            mainGameScreen = (org.destinationsol.ui.nui.screens.MainGameScreen) cmp.getNuiManager().createScreen(NUI_MAIN_GAME_SCREEN_MOBILE_URI);
+        }
     }
 
     // This was added for PlayerCreatorTest.java (used in PlayerCreator)
     // so that it can successfully mock the returned result.
-    public MainGameScreen getMainGameScreen() {
-        return mainGameScreen;
+    public MainGameScreen getOldMainGameScreen() {
+        return oldMainGameScreen;
     }
 }

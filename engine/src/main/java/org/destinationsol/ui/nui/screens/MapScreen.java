@@ -228,13 +228,13 @@ public class MapScreen extends NUIScreenLayer {
     public void onRemoved() {
         SolGame solGame = solApplication.getGame();
         solGame.getMapDrawer().setToggled(false);
-        solApplication.getInputManager().setScreen(solApplication, solGame.getScreens().mainGameScreen);
+        solApplication.getInputManager().setScreen(solApplication, solGame.getScreens().oldMainGameScreen);
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
-        ShipUiControl shipControl = solApplication.getGame().getScreens().mainGameScreen.getShipControl();
+        ShipUiControl shipControl = solApplication.getGame().getScreens().oldMainGameScreen.getShipControl();
         if (shipControl instanceof ShipMouseControl) {
             shipControl.update(solApplication, true);
         }
