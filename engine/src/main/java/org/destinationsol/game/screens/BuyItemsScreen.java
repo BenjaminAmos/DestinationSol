@@ -45,6 +45,9 @@ public class BuyItemsScreen extends InventoryOperationsScreen {
             TalkScreen talkScreen = game.getScreens().talkScreen;
             SolShip target = talkScreen.getTarget();
             SolItem selectedItem = inventoryScreen.getSelectedItem();
+            if (selectedItem == null) {
+                return;
+            }
 
             target.getTradeContainer().getItems().remove(selectedItem);
             hero.getItemContainer().add(selectedItem);

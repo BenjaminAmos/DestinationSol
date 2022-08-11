@@ -20,7 +20,6 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import org.destinationsol.Const;
 import org.destinationsol.SolApplication;
 import org.destinationsol.assets.Assets;
-import org.destinationsol.common.In;
 import org.destinationsol.game.item.ItemContainer;
 import org.destinationsol.game.item.SolItem;
 import org.destinationsol.game.screens.BuyItemsScreen;
@@ -53,6 +52,7 @@ import org.terasology.nui.widgets.UIButton;
 import org.terasology.nui.widgets.UIImage;
 import org.terasology.nui.widgets.UILabel;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -63,8 +63,7 @@ import java.util.List;
  * which can provide up to 3 additional "action buttons" placed in the bottom-right corner of the screen.
  */
 public class InventoryScreen extends NUIScreenLayer {
-    @In
-    private SolApplication solApplication;
+    private final SolApplication solApplication;
     private UILabel titleLabel;
     private ColumnLayout inventoryRows;
     private UIWarnButton nextButton;
@@ -86,6 +85,11 @@ public class InventoryScreen extends NUIScreenLayer {
     private ChooseMercenaryScreen chooseMercenaryScreen;
     private GiveItemsScreen giveItemsScreen;
     private TakeItems takeItems;
+
+    @Inject
+    public InventoryScreen(SolApplication solApplication) {
+        this.solApplication = solApplication;
+    }
 
     @Override
     public void initialise() {
