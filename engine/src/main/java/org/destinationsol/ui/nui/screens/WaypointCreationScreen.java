@@ -32,6 +32,8 @@ import org.terasology.nui.databinding.ReadOnlyBinding;
 import org.terasology.nui.widgets.UIImage;
 import org.terasology.nui.widgets.UISlider;
 
+import javax.inject.Inject;
+
 /**
  * This screen is responsible for choosing the colour of a waypoint and then placing it.
  * The position of the waypoint to place is decided in the {@link MapScreen}.
@@ -39,8 +41,7 @@ import org.terasology.nui.widgets.UISlider;
  * TODO: This screen is essentially a basic colour picker. Maybe it should be adapted into a generic widget instead?
  */
 public class WaypointCreationScreen extends NUIScreenLayer {
-    @In
-    private SolApplication solApplication;
+    private final SolApplication solApplication;
     private UISlider redSlider;
     private UISlider greenSlider;
     private UISlider blueSlider;
@@ -49,6 +50,11 @@ public class WaypointCreationScreen extends NUIScreenLayer {
     private KeyActivatedButton cancelButton;
     private Color chosenColour;
     private Vector2 waypointPosition;
+
+    @Inject
+    public WaypointCreationScreen(SolApplication solApplication) {
+        this.solApplication = solApplication;
+    }
 
     @Override
     public void initialise() {

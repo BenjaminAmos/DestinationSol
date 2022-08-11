@@ -20,7 +20,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import org.destinationsol.GameOptions;
 import org.destinationsol.SolApplication;
-import org.destinationsol.common.In;
 import org.destinationsol.game.MapDrawer;
 import org.destinationsol.game.SolCam;
 import org.destinationsol.game.SolGame;
@@ -42,6 +41,7 @@ import org.terasology.nui.events.NUIMouseClickEvent;
 import org.terasology.nui.events.NUIMouseDragEvent;
 import org.terasology.nui.events.NUIMouseWheelEvent;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 
 /**
@@ -62,8 +62,7 @@ public class MapScreen extends NUIScreenLayer {
     private static final String REMOVE_WAYPOINT_TEXT = "Marker-";
     private static final String CANCEL_TEXT = "Cancel";
 
-    @In
-    private SolApplication solApplication;
+    private final SolApplication solApplication;
     private UIWarnButton closeButton;
     private UIWarnButton zoomInButton;
     private UIWarnButton zoomOutButton;
@@ -77,10 +76,10 @@ public class MapScreen extends NUIScreenLayer {
                 SolGame game = solApplication.getGame();
                 MapDrawer mapDrawer = game.getMapDrawer();
                 float mapZoom = mapDrawer.getZoom();
+                SolCam solCam = solApplication.getGame().getCam();
 
-                SolCam camera = solApplication.getContext().get(SolCam.class);
-                float camAngle = camera.getAngle();
-                Vector2 mapCamPos = camera.getPosition().add(mapDrawer.getMapDrawPositionAdditive());
+                float camAngle = solCam.getAngle();
+                Vector2 mapCamPos = solCam.getPosition().add(mapDrawer.getMapDrawPositionAdditive());
                 Vector2i mousePosition = event.getMouse().getPosition();
                 // Canvas co-ordinates are relative to the virtual canvas size, rather than the physical canvas size.
                 // The scale factor is therefore needed to convert these virtual co-ordinates into screen co-ordinates.
@@ -139,7 +138,7 @@ public class MapScreen extends NUIScreenLayer {
         public void onMouseDrag(NUIMouseDragEvent event) {
             MapDrawer mapDrawer = solApplication.getGame().getMapDrawer();
             GameOptions gameOptions = solApplication.getOptions();
-            SolCam solCam = solApplication.getContext().get(SolCam.class);
+            SolCam solCam = solApplication.getGame().getCam();
 
             Vector2d delta = event.getMouse().getDelta();
             com.badlogic.gdx.math.Vector2 deltaPosition = new com.badlogic.gdx.math.Vector2((float)delta.x, (float)delta.y);
@@ -150,6 +149,11 @@ public class MapScreen extends NUIScreenLayer {
             mapDrawer.getMapDrawPositionAdditive().add(deltaPosition.scl(scrollFactor).rotateDeg(rotateAngle));
         }
     };
+
+    @Inject
+    public MapScreen(SolApplication solApplication) {
+        this.solApplication = solApplication;
+    }
 
     @Override
     public void initialise() {
@@ -165,6 +169,7 @@ public class MapScreen extends NUIScreenLayer {
         });
 
         zoomInButton = find("zoomInButton", UIWarnButton.class);
+        zoomInButton.setKey(GDXInputUtil.GDXToNuiKey(solApplication.getOptions().getKeyZoomIn()));
         zoomInButton.subscribe(button -> {
             MapDrawer mapDrawer = solApplication.getGame().getMapDrawer();
             mapDrawer.changeZoom(true);
@@ -175,6 +180,7 @@ public class MapScreen extends NUIScreenLayer {
         });
 
         zoomOutButton = find("zoomOutButton", UIWarnButton.class);
+        zoomOutButton.setKey(GDXInputUtil.GDXToNuiKey(solApplication.getOptions().getKeyZoomOut()));
         zoomOutButton.subscribe(button -> {
             MapDrawer mapDrawer = solApplication.getGame().getMapDrawer();
             mapDrawer.changeZoom(false);
