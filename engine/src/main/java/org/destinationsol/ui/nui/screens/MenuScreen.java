@@ -17,19 +17,24 @@
 package org.destinationsol.ui.nui.screens;
 
 import org.destinationsol.SolApplication;
-import org.destinationsol.common.In;
 import org.destinationsol.ui.nui.NUIScreenLayer;
 import org.destinationsol.ui.nui.widgets.KeyActivatedButton;
 import org.terasology.nui.backends.libgdx.GDXInputUtil;
 import org.terasology.nui.widgets.UIButton;
+
+import javax.inject.Inject;
 
 /**
  * This is the game menu, accessible from anytime in-game by pressing the menu key (default "Escape").
  * The game menu allows you to configure volume options, trigger a respawn or exit to the main menu.
  */
 public class MenuScreen extends NUIScreenLayer {
-    @In
-    private SolApplication solApplication;
+    private final SolApplication solApplication;
+
+    @Inject
+    public MenuScreen(SolApplication solApplication) {
+        this.solApplication = solApplication;
+    }
 
     @Override
     public void initialise() {
