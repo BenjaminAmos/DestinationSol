@@ -350,8 +350,9 @@ public class NUIManager {
     public void setScreen(NUIScreenLayer layer) {
         Iterator<NUIScreenLayer> screenIterator = uiScreens.descendingIterator();
         while (screenIterator.hasNext()) {
-            screenIterator.next().onRemoved();
+            NUIScreenLayer uiScreen = screenIterator.next();
             screenIterator.remove();
+            uiScreen.onRemoved();
         }
 
         pushScreen(layer);
@@ -362,10 +363,9 @@ public class NUIManager {
      * @return the topmost screen
      */
     public NUIScreenLayer popScreen() {
-        if (!uiScreens.isEmpty()) {
-            uiScreens.peek().onRemoved();
-        }
-        return uiScreens.pop();
+        NUIScreenLayer uiScreen = uiScreens.pop();
+        uiScreen.onRemoved();
+        return uiScreen;
     }
 
     /**
@@ -373,8 +373,8 @@ public class NUIManager {
      * @param screen the screen to remove
      */
     public void removeScreen(NUIScreenLayer screen) {
-        screen.onRemoved();
         uiScreens.remove(screen);
+        screen.onRemoved();
     }
 
     /**
@@ -413,10 +413,12 @@ public class NUIManager {
      * Removes all of the UI screens currently on UI stack.
      */
     public void clearScreens() {
-        for (NUIScreenLayer uiScreen : uiScreens) {
+        Iterator<NUIScreenLayer> screenIterator = uiScreens.descendingIterator();
+        while (screenIterator.hasNext()) {
+            NUIScreenLayer uiScreen = screenIterator.next();
+            screenIterator.remove();
             uiScreen.onRemoved();
         }
-        uiScreens.clear();
     }
 
     /**

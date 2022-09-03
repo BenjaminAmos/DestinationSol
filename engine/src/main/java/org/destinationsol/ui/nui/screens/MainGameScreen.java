@@ -170,14 +170,22 @@ public class MainGameScreen extends NUIScreenLayer {
                     public Float get() {
                         Hero hero = solApplication.getGame().getHero();
                         Shield heroShield = hero.getShield();
-                        return heroShield.getLife() / heroShield.getMaxLife();
+                        if (heroShield != null) {
+                            return heroShield.getLife() / heroShield.getMaxLife();
+                        } else {
+                            return 0.0f;
+                        }
                     }
                 }, new ReadOnlyBinding<String>() {
                     @Override
                     public String get() {
                         Hero hero = solApplication.getGame().getHero();
                         Shield heroShield = hero.getShield();
-                        return (int) Math.floor(heroShield.getLife()) + "/" + (int) Math.floor(heroShield.getMaxLife());
+                        if (heroShield != null) {
+                            return (int) Math.floor(heroShield.getLife()) + "/" + (int) Math.floor(heroShield.getMaxLife());
+                        } else {
+                            return "";
+                        }
                     }
                 }, new DefaultBinding<>(), null, new DefaultBinding<>(0.0f));
         statsBars.addWidget(shieldStats);

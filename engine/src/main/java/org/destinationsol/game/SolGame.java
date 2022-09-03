@@ -339,6 +339,8 @@ public class SolGame {
 
             // TODO: Remove this when context is reset after each game
             context.get(EntitySystemManager.class).getEntityManager().allEntities().forEach(EntityRef::delete);
+        } else {
+            tutorialManager = Optional.empty();
         }
         FactionInfo.clearValues();
         try {

@@ -165,7 +165,9 @@ public class MapScreen extends NUIScreenLayer {
                 return;
             }
 
-            nuiManager.popScreen();
+            if (nuiManager.hasScreen(this)) {
+                nuiManager.popScreen();
+            }
         });
 
         zoomInButton = find("zoomInButton", UIWarnButton.class);
@@ -226,6 +228,10 @@ public class MapScreen extends NUIScreenLayer {
 
     @Override
     public void onRemoved() {
+        // Act as if we pressed the close button when the screen is removed.
+        // This fixes the escape key not advancing the tutorial.
+        closeButton.simulatePress();
+
         SolGame solGame = solApplication.getGame();
         solGame.getMapDrawer().setToggled(false);
         solApplication.getInputManager().setScreen(solApplication, solGame.getScreens().oldMainGameScreen);

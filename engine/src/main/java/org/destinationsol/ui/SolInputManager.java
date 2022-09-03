@@ -366,13 +366,6 @@ public class SolInputManager {
             }
         }
         uiDrawer.setTextMode(null);
-
-        SolGame game = solApplication.getGame();
-        TutorialManager tutorialManager = game == null ? null : game.getTutMan();
-        if (tutorialManager != null &&
-                solApplication.getNuiManager().getTopScreen() != game.getScreens().menuScreen) {
-            tutorialManager.draw(uiDrawer);
-        }
     }
 
     public void drawCursor(UiDrawer uiDrawer) {
