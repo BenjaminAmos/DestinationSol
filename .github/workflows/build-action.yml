@@ -1,0 +1,10 @@
+name: Build Destination Sol
+on: push
+
+jobs:
+  container-job:
+    # Containers must run in Linux based operating systems
+    runs-on: ubuntu-latest
+    container: terasology/jenkins-android-agent
+    steps:
+      - run: chmod +x gradlew && ./gradlew build
