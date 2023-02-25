@@ -5,7 +5,10 @@ jobs:
   build-game:
     # Containers must run in Linux based operating systems
     runs-on: ubuntu-latest
-    container: terasology/jenkins-android-agent
+    container:
+      image: terasology/jenkins-android-agent
+      # Work-around for https://github.com/actions/checkout/issues/956
+      options: --user root
     steps:
       - uses: actions/checkout@v3
-      - run: cd ${{ github.workspace }} && chmod +x gradlew && ./gradlew build
+      - run: "su jenkins -c 'cd ${{ github.workspace }} && chmod +x gradlew && ./gradlew build'"
