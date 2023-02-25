@@ -11,4 +11,4 @@ jobs:
       options: --user root
     steps:
       - uses: actions/checkout@v3
-      - run: "su jenkins -c 'cd ${{ github.workspace }} && chmod +x gradlew && ./gradlew build'"
+      - run: "su jenkins -c 'chmod +x gradlew && ./gradlew build'"
