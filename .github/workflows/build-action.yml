@@ -14,7 +14,7 @@ jobs:
       - name: Set-up Android Build
         run: echo sdk.dir=$ANDROID_SDK_ROOT > local.properties
       - name: Clone Android Facade
-      - uses: actions/checkout@v3
+        uses: actions/checkout@v3
         with:
           repository: MovingBlocks/DestSolAndroid
       - name: Build with Gradle
