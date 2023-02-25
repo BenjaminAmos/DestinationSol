@@ -11,6 +11,15 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 6.8
+          arguments: distZipUnbundledJRE
+      - uses: actions/upload-artifact@v3
+        with:
+          name: DestinationSol.zip
+          path: desktop/build/distributions/DestinationSol.zip
       - name: Set-up Android Build
         run: echo sdk.dir=$ANDROID_SDK_ROOT > local.properties
       - name: Clone Android Facade
@@ -18,8 +27,12 @@ jobs:
         with:
           repository: MovingBlocks/DestSolAndroid
           path: android
-      - name: Build with Gradle
+      - name: Build Android with Gradle
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 6.8
-          arguments: buildDebug
+          arguments: ':android:assembleDebug'
+      - uses: actions/upload-artifact@v3
+        with:
+          name: android-debug.apk
+          path: android/build/outputs/apk/debug/android-debug.apk
