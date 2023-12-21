@@ -277,8 +277,15 @@ public class ModuleManager implements AutoCloseable {
         }
 
         if (moduleConfig.useSecurityManager()) {
-            Policy.setPolicy(new ModuleSecurityPolicy());
-            System.setSecurityManager(new ModuleSecurityManager());
+            String javaVersion = System.getProperty("java.version");
+            int javaMajorVersion = Integer.parseInt(javaVersion.substring(0, javaVersion.indexOf('.')));
+            if (javaMajorVersion < 18 || "allow".equals(System.getProperty("java.security.manager"))) {
+                Policy.setPolicy(new ModuleSecurityPolicy());
+                System.setSecurityManager(new ModuleSecurityManager());
+            } else {
+                logger.warn("SecurityManager is disabled starting with Java 18 - module sandbox functionality is limited!");
+                logger.warn("To enable SecurityManager, use the \"-Djava.security.manager=allow\" JVM option.");
+            }
         }
 
         environment = new ModuleEnvironment(beanContext, modules, permissionFactory, moduleConfig.getClassLoaderSupplier());
